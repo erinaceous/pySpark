@@ -1,0 +1,32 @@
+pySpark - simple python libraries used for rapid development of virtual RoboCup
+(SimSpark) agents.
+
+Whilst SimSpark server (rcssserver3d) is easy enough to communicate with over
+TCP, we had to jump over undocumented hurdles just to create a working agent
+that could interact with the rest of the simulated environment.
+
+Simple things such as sending commands to the server in the right binary
+format were either undocumented or very vaguely documented.
+
+For this reason, we've decided to release our simple python libraries on
+GitHub, so that other people can develop for RoboCup events easily in Python.
+
+-------------------------------------------------------------------------------
+pySpark v1, original code by Owain Jones <tehdoomcat@gmail.com>
+-------------------------------------------------------------------------------
+
+INSTALLATION/USAGE GUIDE
+I have yet to start using distutils or setup.py, or even format the scripts
+with docstrings (or generate documentation), but using the libs should be
+easy enough.
+
+net.py - low-level networking; requires socket and threading python libraries.
+bot.py - simple class for creating virtual agents.
+net-test.py - uses net, user can send raw s-statements to the simspark server.
+input-maps.py - 
+main.py - 
+
+Simply extract these files to wherever you want to use them, and import them
+as you would for any other code.
+
+
