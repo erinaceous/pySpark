@@ -1,7 +1,7 @@
 #!/usr/bin/python -OO
 
-import psyco
-psyco.full()
+#import psyco
+#psyco.full()
 
 import pygame,net,bot
 from pygame.locals import *
