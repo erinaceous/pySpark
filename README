@@ -12,7 +12,7 @@ For this reason, we've decided to release our simple python libraries on
 GitHub, so that other people can develop for RoboCup events easily in Python.
 
 -------------------------------------------------------------------------------
-pySpark v1, original code by Owain Jones <tehdoomcat@gmail.com>
+pySpark v1, Owain Jones <tehdoomcat@gmail.com>
 -------------------------------------------------------------------------------
 
 INSTALLATION/USAGE GUIDE
@@ -20,13 +20,13 @@ I have yet to start using distutils or setup.py, or even format the scripts
 with docstrings (or generate documentation), but using the libs should be
 easy enough.
 
-net.py - low-level networking; requires socket and threading python libraries.
-bot.py - simple class for creating virtual agents.
-net-test.py - uses net, user can send raw s-statements to the simspark server.
-input-maps.py - 
-main.py - 
+net.py -	low-level networking; requires socket and threading python
+		libraries.
+bot.py -	simple class for creating virtual agents.
+net-test.py -	uses net, user can send raw s-statements to the simspark server.
+input-maps.py -	map joytstick buttons/axes to bot actions.
+main.py -	make something useful out of the libs - this spawns a bot that
+		you can control using an Xbox360 controller.
 
 Simply extract these files to wherever you want to use them, and import them
 as you would for any other code.
-
-
