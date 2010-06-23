@@ -3,20 +3,13 @@
 #import psyco
 #psyco.full()
 
-import pygame,net,bot
+host = ''
+port = 3100
+
+import pygame,net
 from pygame.locals import *
-execfile('input_maps.py')
-
-r = net.rcReceiver()
-s = r.getSocket() #return the actual socket used
-#as an object, so we can send() things on it
-
-r.start() #rcReceiver is actually a class of thread.
-#When running it just recv()'s from the open socket,
-#so RCSS keeps accepting commands from the client.
-#all recv()'d data can be retrieved from the var
-#r.buffer, but we have no reason to retreive the
-#data in this case.
+execfile('bot.py')
+execfile('maps.py')
 
 pygame.display.init()
 pygame.joystick.init()
@@ -25,13 +18,20 @@ time = pygame.time.Clock()
 running = 1
 naos = []
 
+sockets = [] #RCSS controls agents on a per-socket basis, so let's create a pool of them.
+
 try:
 	for i in range(pygame.joystick.get_count()):
-		naos.append(bot.Nao(pygame.joystick.Joystick(i),i,r))
-		print 'Enabled Joystick',naos[i].joystick.get_name(),'For Nao',i
+		sockets.append(net.rcSocket(host,port))
+		naos.append(Nao(pygame.joystick.Joystick(i),i+1,'blue',sockets[i]))
+		print 'Enabled Joystick',naos[i].joystick.get_name(),'For Nao',i+1
 except pygame.error:
 	print 'No Joysticks found.',pygame.get_error()
 	quit()
+
+recv = net.rcReceiver(sockets) #rcReceiver reads data from a LIST of sockets.
+recv.start() #it's also a thread, so start it. This is just to keep RCSS
+#accepting our own commands.
 
 while running:
 	try:
@@ -44,15 +44,14 @@ while running:
 				#vars and the keys are
 				#the pygame events
 
-		map(bot.Nao.think,naos)
+		map(Nao.think,naos)
 
 	except KeyboardInterrupt:
-		r.stop() #the net thread doesn't seem to
-		#end properly, why is this?
+		recv.stop()
 		del running
 		quit()
 
-	time.tick(20) #run the main loop no more than
-	#20 frames per second - saves a bunch of CPU
+	time.tick(10) #run the main loop no more than
+	#10 frames per second - saves a bunch of CPU
 	#time, and RCSS starts to block commands sent
 	#if they're sent too fast (it seems).

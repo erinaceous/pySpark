@@ -1,8 +1,8 @@
 #!/usr/bin/python -OO
 
-import net,psyco
+import net
 from pygame import time
-psyco.full()
+#psyco.full()
 
 #r = net.rcReceiver('192.168.212.201')
 r = net.rcReceiver()

@@ -8,32 +8,30 @@ class defaults:
 	initStr = '(scene rsg/agent/nao/nao.rsg)(init (unum 0)(TeamName NaoRobot))'
 
 class rcReceiver(threading.Thread):
-	def __init__(self,host=defaults.host,port=defaults.port,window=1024):
+	def __init__(self,sockets,window=1024):
 		threading.Thread.__init__(self)
-		self.sock = rcSocket(host,port)
+		self.sockets = sockets
 		self.window = window
 		self.buffer = ''
 		self.running = True
-
-	def getSocket(self):
-		return self.sock
 
 	def stop(self):
 		self.running = False
 		self.sock.close()
 
-	def recv(self):
+	def recv(self,sock):
 		buffer = ''
 		while len(buffer) < self.window:
-			chunk = self.sock.sock.recv(self.window-len(buffer))
+			chunk = sock.sock.recv(self.window-len(buffer))
 			if chunk == '': break
 			buffer += chunk
 		return buffer
 
 	def run(self):
 		while self.running == True:
-			self.buffer = self.recv()
-			sleep(0)
+			for sock in self.sockets:
+				self.recv(sock)
+				sleep(0)
 
 class rcSocket:
 	def __init__(self,host=defaults.host,port=defaults.port):
