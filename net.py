@@ -8,7 +8,7 @@ class defaults:
 	initStr = '(scene rsg/agent/nao/nao.rsg)(init (unum 0)(TeamName NaoRobot))'
 
 class rcReceiver(threading.Thread):
-	def __init__(self,sockets,window=1024):
+	def __init__(self,sockets,window=4096):
 		threading.Thread.__init__(self)
 		self.sockets = sockets
 		self.window = window
@@ -29,18 +29,34 @@ class rcReceiver(threading.Thread):
 
 	def run(self):
 		while self.running == True:
+			buffer = ''
 			for sock in self.sockets:
-				self.recv(sock)
+				buffer += sock.recv()
 				sleep(0)
+			print "\n",buffer,"\n"
+
+class rcDiscarder(rcReceiver):
+	def run(self):
+		while self.running == True:
+			for sock in self.sockets:
+				try: sock.sock.recv(4096)
+				except socket.error: pass
+			sleep(0)
 
 class rcSocket:
-	def __init__(self,host=defaults.host,port=defaults.port):
+	def __init__(self,host=defaults.host,port=defaults.port,window=4096):
+		self.window = window
 		self.addr = (host,port)
 		self.sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-		self.sock.connect(self.addr)
+		self.sock.setblocking(0)
+		try:
+			self.sock.connect(self.addr)
+		except socket.error:
+			print socket.error
+			self.sock.connect(self.addr)
 
 	def close(self):
-		self.sock.shutdown(1)
+		self.sock.shutdown(socket.SHUT_RDWR)
 		self.sock.close()
 
 	def send(self,string):
@@ -48,3 +64,11 @@ class rcSocket:
 		length = '0'*(8-len(length))+length
 		length = unhexlify(length)
 		self.sock.send(length+string)
+
+	def recv(self):
+                buffer = ''
+                while len(buffer) < self.window:
+                        chunk = self.sock.recv(self.window-len(buffer))
+                        if chunk == '': break
+                        buffer += chunk
+                return buffer

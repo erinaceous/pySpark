@@ -5,9 +5,9 @@ from pygame import time
 #psyco.full()
 
 #r = net.rcReceiver('192.168.212.201')
-r = net.rcReceiver()
+s = [net.rcSocket()]
+r = net.rcReceiver(s)
 c = time.Clock()
-s = r.getSocket()
 
 r.start()
 #s.send(net.defaults.initStr+'(he1 -1 0)')
@@ -31,7 +31,10 @@ running = True
 
 while running == True:
 	try:
-		s.send(raw_input(">\t"))
+		s[0].send(raw_input("1>\t"))
+#		s[0].recv()
+#		s[1].send(raw_input("2>\t"))
+#		s[1].recv()
 		c.tick(1)
 	except KeyboardInterrupt:
 		r.stop()

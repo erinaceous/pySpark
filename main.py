@@ -29,9 +29,9 @@ except pygame.error:
 	print 'No Joysticks found.',pygame.get_error()
 	quit()
 
-recv = net.rcReceiver(sockets) #rcReceiver reads data from a LIST of sockets.
+recv = net.rcDiscarder(sockets) #rcReceiver reads data from a LIST of sockets.
 recv.start() #it's also a thread, so start it. This is just to keep RCSS
-#accepting our own commands.
+#accepting our own commands. We don't do anything with the data.
 
 while running:
 	try:
