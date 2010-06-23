@@ -25,7 +25,7 @@ class Nao:
 		elif self.init == 1:
 				self.s.send('(init unum '+str(self.id)+')(TeamName '+self.team+'))')
 				self.init = 2
-#		elif self.init == 2:
+		elif self.init == 2:
 #			if self.state == 0 and self.idle == False: self.s.send('(he1 0)(lae1 0)')
 #			elif self.state == 5: self.s.send('(he1 '+str(0.1+self.speed)+')')
 #			elif self.state == 6: self.s.send('(he1 '+str(-0.1-self.speed)+')')
@@ -34,11 +34,11 @@ class Nao:
 #		if self.state in range(1,8):
 #			self.idle = False
 #		print self.init, self.state
-		frame = self.m.next()
-		buffer = ''
-		for joint in frame:
-			buffer += '('+joint+' '+str(frame[joint])+')'
-		self.s.send(buffer)
+			frame = self.m.next()
+			buffer = ''
+			for joint in frame:
+				buffer += '('+joint+' '+str(frame[joint])+')'
+			self.s.send(buffer)
 			
 
 	def idle(self):
