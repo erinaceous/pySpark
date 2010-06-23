@@ -1,0 +1,24 @@
+#Nao Bot
+#HeadYaw,-1.57,1.57		
+#HeadPitch,-0.79,0.79		
+#CameraSelect,0,0.7
+#RShoulderPitch,-2.09,2.09
+#RShoulderRoll,-1.66,0.00
+#RElbowYaw,-2.09,2.09
+#RElbowRoll,0,1.66
+#LShoulderPitch,-2.09,2.09
+#LShoulderRoll,0,1.66
+#LElbowYaw,-2.09,2.09
+#LElbowRoll,-1.66,0
+RHipYawPitch,-0.94,0.68		rle1
+RHipRoll,-0.79,0.44		rle2
+RHipPitch,-1.57,0.52		rle3
+RKneePitch,0,2.27		rle4
+RAnklePitch,-1.22,0.79		rle5
+RAnkleRoll,-0.79,0.79		rle6
+LHipYawPitch,-0.94,0.68		lle1
+LHipRoll,-0.44,0.79		lle2
+LHipPitch,-1.57,0.52		lle3
+LKneePitch,0,2.27		lle4
+LAnklePitch,-1.22,0.79		lle5
+LAnkleRoll,-0.79,0.79		lle6

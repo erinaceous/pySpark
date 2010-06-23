@@ -1,0 +1,12 @@
+LHipYawPitch	lle1
+LHipRoll	lle2
+LHipPitch	lle3
+LKneePitch	lle4
+LAnklePitch	lle5
+LAnkleRoll	lle6
+RHipYawPitch	rle1
+RHipRoll	rle2
+RHipPitch	rle3
+RKneePitch	rle4
+RAnklePitch	rle5
+RAnkleRoll	rle6
