@@ -51,7 +51,9 @@ class Motion:
 		tmp = {}
 		for i,key in enumerate(self.motions):
 			try:
-				tmp[self.rcssjoints[i]] = round(float(self.motions[key][frame]),1)
+				joint = self.motions[key][frame]
+				if joint[-1] == "\n": joint = joint[:-1]
+				tmp[self.rcssjoints[i]] = float(joint)
 			except IndexError:
 				return {}
 		return tmp
