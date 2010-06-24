@@ -29,6 +29,19 @@ maps = {
 		"buttons": {
 			10: 1 #10: init
 		}
+	},
+	"Logitech Logitech Attack 3":{
+		"axis": {
+			1: (1,-1),
+			2: (1,1)
+		},
+		"buttons": {
+			10: 0,
+			#the next two are custom: cycle
+			#through joint names on the bot
+			11: 3, #go back a joint
+			12: 4 #go forward a joint
+		}
 	}
 }
 

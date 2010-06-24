@@ -1,11 +1,11 @@
 #!/usr/bin/python -OO
 # Parser class - read SimSpark .motion files into a format that RCSS can understand.
-# Takes .motion files and 'limit.txt's, which define the maximum/minimum amount each
+# Takes .motion files and 'joint.txt's, which define the maximum/minimum amount each
 # of a robot's limbs can move in Webots & RCSS, and the names of the joints in both.
 
 class Motion:
 	def __init__(self,limits=None,motion=None):
-		self.rcssjoints = []
+		self.rcssjoints = {}
 		if limits:
 			self.set_limits(limits)
 		if motion:
@@ -18,9 +18,12 @@ class Motion:
 		for line in tmpfile:
 			if line[0] == chr(35): continue #if line starts with a hash, it's a comment.
 			tmp = line.split("\t\t")
-			if tmp[1] not in ['',"\n",' ',"\r","\r\n"]: self.rcssjoints.append(tmp[1][:-1])
-			tmp = tmp[0].split(',')
-			limits[tmp[0]] = (round(float(tmp[1]),2),round(float(tmp[2][0:-1]),2))
+			tmp[0] = tmp[0].split(',')
+			limits[tmp[0][0]] = (round(float(tmp[0][1]),2),round(float(tmp[0][2][0:-1]),2))
+			if tmp[1] not in ['',"\n"]:
+				tmp[1] = tmp[1].split(",")
+				if tmp[1][2][-1] == "\n": tmp[1][2] = tmp[1][2][:-1]
+				self.rcssjoints[tmp[0][0]] = tmp[1]
 		self.limits = limits
 
 	def set_limit(self,joint,tuple):
@@ -47,13 +50,20 @@ class Motion:
 						motions[keys[i-3]].append(tmp[i])
 		self.motions = motions
 
+	def get_joints(self,type='rcss'):
+		joints = []
+		for i,key in enumerate(self.limits):
+			if type == 'webots': joints[:] = key
+			elif type == 'rcss': return self.rcssjoints[key][0]
+		return joints
+
 	def get_frame(self,frame=0):
 		tmp = {}
 		for i,key in enumerate(self.motions):
 			try:
 				joint = self.motions[key][frame]
 				if joint[-1] == "\n": joint = joint[:-1]
-				tmp[self.rcssjoints[i]] = float(joint)
+				tmp[self.rcssjoints[key][0]] = float(joint*)
 			except IndexError:
 				return {}
 		return tmp

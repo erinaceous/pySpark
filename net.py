@@ -31,28 +31,28 @@ class rcReceiver(threading.Thread):
 		while self.running == True:
 			buffer = ''
 			for sock in self.sockets:
-				buffer += sock.recv()
+				try: sock.buffer += sock.recv()
+				except socket.error: pass
 				sleep(0)
-			print "\n",buffer,"\n"
 
 class rcDiscarder(rcReceiver):
 	def run(self):
 		while self.running == True:
 			for sock in self.sockets:
-				try: sock.sock.recv(4096)
+				try: sock.sock.recv(8192)
 				except socket.error: pass
 			sleep(0)
 
 class rcSocket:
 	def __init__(self,host=defaults.host,port=defaults.port,window=4096):
 		self.window = window
+		self.buffer = ''
 		self.addr = (host,port)
 		self.sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		self.sock.setblocking(0)
 		try:
 			self.sock.connect(self.addr)
 		except socket.error:
-			print socket.error
 			self.sock.connect(self.addr)
 
 	def close(self):
