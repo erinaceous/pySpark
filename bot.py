@@ -53,12 +53,13 @@ class Nao:
 			frame = self.m.next()
 			buffer = ''
 			for joint in frame:
-				buffer += '('+joint+' '+str(frame[joint])+')'
+				buffer += '('+joint+' '+str(round(frame[joint]/(40-time.get_fps()),3))+')'
 			self.s.send(buffer)
 		
 
-	def idle(self):
-		self.state = 0
+	def idle(self,e):
+		if e.dict['button'] in self.map['buttons']:
+			self.state = 0
 
 	def action(self,e):
 		map = self.map['buttons']
@@ -77,7 +78,7 @@ class Nao:
 
 def idle(e):
 	if e.dict['joy'] <= len(naos):
-		naos[e.dict['joy']].state = 0
+		Nao.idle(naos[e.dict['joy']],e) 
 
 def move(e):
 	if e.dict['joy'] <= len(naos):

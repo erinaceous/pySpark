@@ -23,7 +23,7 @@ class Motion:
 			if tmp[1] not in ['',"\n"]:
 				tmp[1] = tmp[1].split(",")
 				if tmp[1][2][-1] == "\n": tmp[1][2] = tmp[1][2][:-1]
-				self.rcssjoints[tmp[0][0]] = tmp[1]
+				self.rcssjoints[tmp[0][0]] = [tmp[1][0],abs(int(tmp[1][1])-int(tmp[1][2]))]
 		self.limits = limits
 
 	def set_limit(self,joint,tuple):
@@ -63,12 +63,21 @@ class Motion:
 			try:
 				joint = self.motions[key][frame]
 				if joint[-1] == "\n": joint = joint[:-1]
-				tmp[self.rcssjoints[key][0]] = float(joint)
+				if frame > 0:
+					lastframe = self.motions[key][frame-1]
+					if lastframe[-1] == "\n": lastframe = lastframe[:-1]
+					joint = (float(joint)*self.rcssjoints[key][1])-(float(lastframe)*self.rcssjoints[key][1])
+				else:
+					joint = float(joint)*self.rcssjoints[key][1]
+				tmp[self.rcssjoints[key][0]] = joint
 			except IndexError:
 				return {}
 		return tmp
 
 	def next(self):
+		if self.index == 0:
+			self.index += 1
+			return self.get_frame(0)
 		if self.index < self.get_length():
 			self.index += 1
 		else:

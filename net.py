@@ -1,5 +1,5 @@
-import socket,threading
-from binascii import a2b_uu,unhexlify
+import socket,select,threading
+from binascii import unhexlify
 from time import sleep
 
 class defaults:
@@ -29,18 +29,23 @@ class rcReceiver(threading.Thread):
 
 	def run(self):
 		while self.running == True:
-			buffer = ''
-			for sock in self.sockets:
+#			buffer = ''
+#			for sock in self.sockets:
+#				try: sock.buffer += sock.recv()
+#				except socket.error: pass
+#				sleep(0)
+			input,output,exception = select.select(self.sockets,[],[])
+			for sock in input:
 				try: sock.buffer += sock.recv()
-				except socket.error: pass
-				sleep(0)
+				except socket.error: continue
+			sleep(0)
 
 class rcDiscarder(rcReceiver):
 	def run(self):
 		while self.running == True:
 			for sock in self.sockets:
 				try: sock.sock.recv(8192)
-				except socket.error: pass
+				except socket.error: continue
 			sleep(0)
 
 class rcSocket:
