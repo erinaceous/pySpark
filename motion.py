@@ -63,7 +63,7 @@ class Motion:
 			try:
 				joint = self.motions[key][frame]
 				if joint[-1] == "\n": joint = joint[:-1]
-				tmp[self.rcssjoints[key][0]] = float(joint*)
+				tmp[self.rcssjoints[key][0]] = float(joint)
 			except IndexError:
 				return {}
 		return tmp
