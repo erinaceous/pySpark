@@ -3,7 +3,8 @@ events = {
 	#and the functions they bind to (in bot.py)
 	pygame.JOYAXISMOTION: move,
 	pygame.JOYBUTTONDOWN: action,
-	pygame.JOYBUTTONUP: idle
+	pygame.JOYBUTTONUP: idle,
+	pygame.KEYDOWN: endloop
 }
 
 maps = {

@@ -11,19 +11,24 @@ class Motion:
 		if motion:
 			self.set_motions(motion)
 		self.index = -1
+		self.acount = 0
 
 	def set_limits(self,file):
 		tmpfile = open(file)
 		limits = {}
 		for line in tmpfile:
 			if line[0] == chr(35): continue #if line starts with a hash, it's a comment.
-			tmp = line.split("\t\t")
+			if line[-1] == "\n": line = line[:-1] #remove newline chars
+
+			tmp = line.split("\t")
+			for i,part in enumerate(tmp):
+				if part == '': del tmp[i]
+
 			tmp[0] = tmp[0].split(',')
-			limits[tmp[0][0]] = (round(float(tmp[0][1]),2),round(float(tmp[0][2][0:-1]),2))
+			limits[tmp[0][0]] = (float(tmp[0][1]),float(tmp[0][2]))
 			if tmp[1] not in ['',"\n"]:
 				tmp[1] = tmp[1].split(",")
-				if tmp[1][2][-1] == "\n": tmp[1][2] = tmp[1][2][:-1]
-				self.rcssjoints[tmp[0][0]] = [tmp[1][0],abs(int(tmp[1][1])-int(tmp[1][2]))]
+				self.rcssjoints[tmp[0][0]] = [tmp[1][0],int(tmp[1][1])-int(tmp[1][2])]
 		self.limits = limits
 
 	def set_limit(self,joint,tuple):
@@ -57,7 +62,7 @@ class Motion:
 			elif type == 'rcss': return self.rcssjoints[key][0]
 		return joints
 
-	def get_frame(self,frame=0):
+	def get_frame(self,frame=0,times=1):
 		tmp = {}
 		for i,key in enumerate(self.motions):
 			try:
@@ -68,28 +73,31 @@ class Motion:
 					if lastframe[-1] == "\n": lastframe = lastframe[:-1]
 					joint = (float(joint)*self.rcssjoints[key][1])-(float(lastframe)*self.rcssjoints[key][1])
 				else:
-					joint = float(joint)*self.rcssjoints[key][1]
-				tmp[self.rcssjoints[key][0]] = joint
+					joint = (float(joint)*self.rcssjoints[key][1])
+				tmp[self.rcssjoints[key][0]] = joint/times
 			except IndexError:
 				return {}
 		return tmp
 
-	def next(self):
+	def next(self,times=1):
 		if self.index == 0:
-			self.index += 1
+			self.index += 1/times
 			return self.get_frame(0)
 		if self.index < self.get_length():
-			self.index += 1
+			self.index += 1/times
 		else:
 			self.index = 0
-		return self.get_frame(self.index)
+		return self.get_frame(int(self.index),times)
 
-	def prev(self):
+	def prev(self,times=1):
+		if self.index == 0:
+			self.index = self.get_length()
+			return self.get_frame(0)
 		if self.index > 0:
-			self.index -= 1
+			self.index -= 1/times
 		else:
-			self.index = 0
-		return self.get_frame(self.index)
+			self.index = self.get_length()
+		return self.get_frame(self.index,times)
 
 	def get_length(self):
 		return len(self.motions[self.motions.keys()[0]])

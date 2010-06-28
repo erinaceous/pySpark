@@ -13,11 +13,6 @@ class rcReceiver(threading.Thread):
 		self.sockets = sockets
 		self.window = window
 		self.buffer = ''
-		self.running = True
-
-	def stop(self):
-		self.running = False
-		self.sock.close()
 
 	def recv(self,sock):
 		buffer = ''
@@ -28,7 +23,7 @@ class rcReceiver(threading.Thread):
 		return buffer
 
 	def run(self):
-		while self.running == True:
+		while len(self.sockets) > 0:
 #			buffer = ''
 #			for sock in self.sockets:
 #				try: sock.buffer += sock.recv()
@@ -39,14 +34,16 @@ class rcReceiver(threading.Thread):
 				try: sock.buffer += sock.recv()
 				except socket.error: continue
 			sleep(0)
+		print 'Socket list depleted; ending rcReceiver thread'
 
 class rcDiscarder(rcReceiver):
 	def run(self):
-		while self.running == True:
+		while len(self.sockets) > 0:
 			for sock in self.sockets:
 				try: sock.sock.recv(8192)
 				except socket.error: continue
 			sleep(0)
+		print 'Socket List depleted; ending rcDiscarder thread'
 
 class rcSocket:
 	def __init__(self,host=defaults.host,port=defaults.port,window=4096):
@@ -58,6 +55,7 @@ class rcSocket:
 		try:
 			self.sock.connect(self.addr)
 		except socket.error:
+			sleep(0.5)
 			self.sock.connect(self.addr)
 
 	def close(self):
@@ -69,7 +67,6 @@ class rcSocket:
 		length = '0'*(8-len(length))+length
 		length = unhexlify(length)
 		self.sock.send(length+string)
-		print string
 
 	def recv(self):
                 buffer = ''
