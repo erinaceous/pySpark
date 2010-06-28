@@ -15,9 +15,19 @@ class Nao:
 		self.id = id
 		self.team = team
 		self.pos = teams[team][id]
-		self.m = motion.Motion('bots/nao/joints.txt','bots/nao/Forwards.motion')
+		self.m = {
+			1: motion.Motion('bots/nao/joints.txt','bots/nao/Forwards.motion'),
+			2: motion.Motion('bots/nao/joints.txt','bots/nao/Forwards.motion')
+		}
 		self.currentjoint = 0
-		self.jointname = self.m.get_joints()[0]
+		self.jointname = self.m[1].get_joints()[0]
+	
+	def reset_joints(self):
+		buffer = ''
+		frame = self.m[1].get_frame(0)
+		for joint in frame:
+			buffer += '('+joint+' 0)'
+		return buffer
 
 	def think(self):
 		if self.init == 0:
@@ -25,41 +35,29 @@ class Nao:
 				self.s.send('(scene rsg/agent/nao/nao.rsg)')
 				self.init = 1
 		elif self.init == 1:
-				self.s.send('(init unum '+str(self.id)+')(TeamName '+self.team+'))')
+				buffer = ''
+				buffer += '(init unum '+str(self.id)+')(TeamName '+self.team+'))'
+				buffer += self.reset_joints()
+				self.s.send(buffer)
 				self.init = 2
 		elif self.init == 2:
-#			if self.state == 0 and self.idle == False: self.s.send('('+self.jointname+' 0)')
-#			if self.state == 11:
-#				try:
-#					self.currentjoint -= 1
-#					self.jointname = self.m.rcssjoints[self.currentjoint][0]
-#				except IndexError:
-#					self.currentjoint = 0
-#					self.jointname = self.m.rcssjoints[0][0]
-#				print self.jointname
-#			elif self.state == 12:
-#				try:
-#					self.currentjoint += 1
-#					self.jointname = self.m.rcssjoints[self.currentjoint][0]
-#				except IndexError:
-#					self.currentjoint = 0
-#					self.jointname = self.m.rcssjoints[0][0]
-#				print self.jointname
-#			elif self.state == 1: self.s.send('('+self.jointname+' '+str(0.1+self.speed)+')')
-#			elif self.state == 2: self.s.send('('+self.jointname+' '+str(-0.1-self.speed)+')')
-#		if self.state in range(1,12):
-#			self.idle = False
-#		print self.init, self.state
-			frame = self.m.next()
-			buffer = ''
-			for joint in frame:
-				buffer += '('+joint+' '+str(round(frame[joint]/(40-time.get_fps()),3))+')'
-			self.s.send(buffer)
+			if self.state == 1:
+				frame = self.m[1].next()
+				buffer = ''
+				for joint in frame:
+					buffer += '('+joint+' '+str(round(frame[joint]/(40-time.get_fps()),3))+')'
+				self.s.send(buffer)
+			elif self.state == 0:
+				if self.idle == False:
+					self.s.send(self.reset_joints())
+					self.idle = True
+			elif self.state == 10:
+				self.s.send(self.reset_joints()+'(beam 0 0 0)')
 		
-
 	def idle(self,e):
 		if e.dict['button'] in self.map['buttons']:
-			self.state = 0
+#			self.state = 0
+			pass
 
 	def action(self,e):
 		map = self.map['buttons']
