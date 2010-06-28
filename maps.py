@@ -28,7 +28,8 @@ maps = {
 			9: (5,1) #9: kick
 		},
 		"buttons": {
-			10: 1 #10: init
+			10: 1, #10: init
+			11: 2 #11: shake head.
 		}
 	},
 	"Logitech Logitech Attack 3":{
@@ -57,7 +58,8 @@ descriptions = {
 	7: 'Left Arm Up',
 	8: 'Left Arm Down',
 	9: 'Kick',
-	10: 'Create Bot (only done once)'
+	10: 'Create Bot (only done once)',
+	11: 'User Assigned Function'
 }
 
 teams = {

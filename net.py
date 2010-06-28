@@ -66,7 +66,10 @@ class rcSocket:
 		length = str(hex(len(string)))[2:]
 		length = '0'*(8-len(length))+length
 		length = unhexlify(length)
-		self.sock.send(length+string)
+		try:
+			self.sock.send(length+string)
+		except socket.error: pass
+		print string
 
 	def recv(self):
                 buffer = ''

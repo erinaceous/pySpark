@@ -5,7 +5,7 @@
 
 host = '192.168.60.7'
 port = 3100
-fps = 50 #how many times the main loop runs a second (or tries to).
+fps = 40 #how many times the main loop runs a second (or tries to).
 #50hz or 50fps; 20ms (same as RCSS)
 
 import pygame,net,sys,threading
@@ -80,10 +80,10 @@ class mainloop(threading.Thread):
 			sys.stdout.write("\r{0}".format(stats))
 			sys.stdout.flush()
 			
-			pygame.time.delay(20) #wait 20ms; keep in sync
+#			pygame.time.delay(20) #wait 20ms; keep in sync
 			#with RCSS loop.
 
-			time.tick() #run the main loop no more than
+			time.tick_busy_loop(fps) #run the main loop no more than
 			#X frames per second - saves a bunch of CPU
 			#time, and RCSS starts to block commands sent
 			#if they're sent too fast (it seems).

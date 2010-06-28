@@ -3,6 +3,8 @@
 # Takes .motion files and 'joint.txt's, which define the maximum/minimum amount each
 # of a robot's limbs can move in Webots & RCSS, and the names of the joints in both.
 
+import math
+
 class Motion:
 	def __init__(self,limits=None,motion=None):
 		self.rcssjoints = {}
@@ -28,7 +30,7 @@ class Motion:
 			limits[tmp[0][0]] = (float(tmp[0][1]),float(tmp[0][2]))
 			if tmp[1] not in ['',"\n"]:
 				tmp[1] = tmp[1].split(",")
-				self.rcssjoints[tmp[0][0]] = [tmp[1][0],int(tmp[1][1])-int(tmp[1][2])]
+				self.rcssjoints[tmp[0][0]] = [tmp[1][0],abs(int(tmp[1][1])-int(tmp[1][2]))]
 		self.limits = limits
 
 	def set_limit(self,joint,tuple):

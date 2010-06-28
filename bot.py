@@ -14,7 +14,6 @@ class Nao:
 		self.speed = 0
 		self.id = id
 		self.team = team
-		self.pos = teams[team][id]
 		self.m = {
 			1: motion.Motion('bots/nao/joints.txt','bots/nao/Forwards.motion'),
 			2: motion.Motion('bots/nao/joints.txt','bots/nao/Backwards.motion'),
@@ -22,11 +21,13 @@ class Nao:
 			4: motion.Motion('bots/nao/joints.txt','bots/nao/SideStepRight.motion'),
 			5: motion.Motion('bots/nao/joints.txt','bots/nao/TurnLeft40.motion'),
 			6: motion.Motion('bots/nao/joints.txt','bots/nao/TurnRight40.motion'),
-			9: motion.Motion('bots/nao/joints.txt','bots/nao/Shoot.motion')
+			9: motion.Motion('bots/nao/joints.txt','bots/nao/Shoot.motion'),
+			11: motion.Motion('bots/nao/joints.txt','bots/nao/HeadShake.motion')
 		}
 		self.joints = motion.Motion('bots/nao/joints.txt','bots/nao/Idle.motion').get_frame(0)
+		#get the names of all the joints so we can reset all their velocities when needs be.
 
-	def __destroy__(self):
+	def __del__(self):
 		print 'Deleting Bot, ID:',self.id
 		self.sock.close()
 
@@ -60,11 +61,13 @@ class Nao:
 				self.init = 2
 		elif self.init == 2:
 			if self.state in self.m.keys():
-				self.s.send(self.set_joints(self.m[self.state].next(2)))
+				self.s.send(self.set_joints(self.m[self.state].next(times=10)))
 				self.idle = False
 			elif self.state == 0:
 				if self.idle == False:
 					self.s.send(self.reset_joints())
+					for m in self.m:
+						self.m[m].index = 0 #reset all animations to their first frame.
 					self.idle = True
 			elif self.state == 10:
 				self.s.send(self.reset_joints()+'(beam 0 0 0)')
@@ -75,8 +78,9 @@ class Nao:
 			stats += "\033[1;31;40m"+statename+' '*(10-len(statename))+"\033[0m\t"
 		
 	def idle(self,e):
-		if e.dict['button'] in self.map['buttons']:
+		if e.dict['button'] in self.map['buttons'] and self.idle == False:
 			self.state = 0
+			self.idle = True
 
 	def action(self,e):
 		map = self.map['buttons']
